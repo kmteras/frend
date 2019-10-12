@@ -1,6 +1,7 @@
 package com.example.heroin;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -15,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
+    private Button exitButton;
+    private Intent service;
+    private AlertDialog.Builder exitDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +26,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         button = findViewById(R.id.startButton);
+        exitButton = findViewById(R.id.exit);
+        exitDialog = new AlertDialog.Builder(this);
 
-        startForegroundService(new Intent(MainActivity.this, Overlay.class));
+
+        //startForegroundService(new Intent(MainActivity.this, Overlay.class));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
         }
@@ -34,9 +41,19 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startForegroundService(new Intent(MainActivity.this, Overlay.class));
+                service = new Intent(MainActivity.this, Overlay.class);
+                startForegroundService(service);
             }
         });
+
+        exitButton.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopService(service);
+
+                finishAndRemoveTask();
+            }
+        }));
 
         findViewById(R.id.openSettings).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Test", "Home button pressed!");
             return false;
         } else {
-            Log.d("test", "Pressed button: " + keyCode);
+            Log.d("service", "Pressed button: " + keyCode);
         }
         return super.onKeyDown(keyCode, event);
     }

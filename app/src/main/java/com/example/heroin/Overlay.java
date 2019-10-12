@@ -106,4 +106,10 @@ public class Overlay extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        wm.removeViewImmediate(mView);
+    }
 }

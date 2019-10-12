@@ -1,8 +1,6 @@
 package com.example.heroin;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
@@ -35,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         exitButton = findViewById(R.id.exit);
         exitDialog = new AlertDialog.Builder(this);
 
-        startForegroundService(new Intent(MainActivity.this, Overlay.class));
+        service = new Intent(MainActivity.this, Overlay.class);
+        startForegroundService(service);
         exitButton.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {

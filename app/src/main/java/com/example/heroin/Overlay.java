@@ -1,0 +1,74 @@
+package com.example.heroin;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.os.IBinder;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+
+public class Overlay extends Service {
+    View mView;
+
+    LayoutInflater inflate;
+    TextView t;
+    Button b;
+
+    @Override
+    public void onCreate() {
+        Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();
+
+
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+        Display display = wm.getDefaultDisplay();  //get phone display size
+        int width = display.getWidth();  // deprecated - get phone display width
+        int height = display.getHeight(); // deprecated - get phone display height
+
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                width,
+                height,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                PixelFormat.TRANSLUCENT);
+
+
+        params.gravity = Gravity.LEFT | Gravity.CENTER;
+        params.setTitle("Load Average");
+
+        inflate = (LayoutInflater) getBaseContext()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mView = inflate.inflate(R.layout.activity_main, null);
+
+        b = mView.findViewById(R.id.button);
+        t = mView.findViewById(R.id.text);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                t.setText("yes you click me ");
+
+            }
+        });
+
+        wm.addView(mView, params);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}

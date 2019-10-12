@@ -50,11 +50,11 @@ public class WindowChangeDetectingService extends AccessibilityService {
     }
 
     private boolean isAllowedApp(ComponentName componentName) {
+        boolean supportedApp = SupportedApplicationsHelper.getListOfSupportedApplications().stream().anyMatch(n -> componentName.flattenToShortString().startsWith(n));
+        Log.d("Test", "Testing if app is allowed. Getting result: " + supportedApp + " for app " + componentName.flattenToShortString());
         boolean ret = !componentName.flattenToShortString().contains("com.example.heroin/.MainActivity")
-                && !componentName.flattenToShortString().contains("com.android.settings")
-                && !componentName.flattenToShortString().contains("com.android.chrome");
-        Log.d("Test", "Testing if app is allowed. Getting result: " + ret + " for app " + componentName);
-        return ret;
+                && !componentName.flattenToShortString().contains("com.android.settings");
+        return supportedApp || ret;
     }
 
     private ActivityInfo tryGetActivity(ComponentName componentName) {

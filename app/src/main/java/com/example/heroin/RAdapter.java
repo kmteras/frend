@@ -59,13 +59,15 @@ public class RAdapter extends RecyclerView.Adapter<RAdapter.ViewHolder> {
         i.addCategory(Intent.CATEGORY_LAUNCHER);
 
         List<ResolveInfo> allApps = pm.queryIntentActivities(i, 0);
-        for(ResolveInfo ri:allApps) {
+        allApps.stream()
+                .filter(r -> SupportedApplicationsHelper.getListOfSupportedApplications().contains(r.activityInfo.packageName))
+                .forEach(ri -> {
             AppInfo app = new AppInfo();
             app.label = ri.loadLabel(pm);
             app.packageName = ri.activityInfo.packageName;
             app.icon = ri.activityInfo.loadIcon(pm);
             appsList.add(app);
-        }
+        });
 
     }
 

@@ -1,5 +1,7 @@
 package com.example.heroin;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,21 +39,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    @Override public boolean onKeyDown ( int keyCode, KeyEvent event){
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("Test", "Pressed button:" + keyCode);
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Log.d("Test", "Back button pressed!");
             return false;
         } else if (keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_MOVE_HOME) {
             Log.d("Test", "Home button pressed!");
             return false;
+        } else {
+            Log.d("test", "Pressed button: " + keyCode);
         }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
-    protected void onUserLeaveHint()
-    {
-        Log.d("onUserLeaveHint","User left the app");
+    protected void onUserLeaveHint() {
+        Log.d("onUserLeaveHint", "User left the app");
         super.onUserLeaveHint();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ActivityManager activityManager = (ActivityManager) getApplicationContext()
+                .getSystemService(Context.ACTIVITY_SERVICE);
+
+        activityManager.moveTaskToFront(getTaskId(), 0);
+        Log.d("onPause", "- ON PAUSE -");
     }
 }

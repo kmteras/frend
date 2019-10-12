@@ -17,7 +17,7 @@ public class RenderView extends View {
 
     public static RenderView renderView;
 
-    private final static int FRAMES = 10;
+    private final static int FRAMES = 21;
     private final int SPRITE_WIDTH;
     private final int SPRITE_HEIGHT;
 

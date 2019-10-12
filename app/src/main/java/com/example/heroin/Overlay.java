@@ -7,26 +7,26 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class Overlay extends Service {
     private View mView;
+    private View darkView;
     private WindowManager wm;
+    private Handler handler;
+    private Runnable updateRunnable;
 
     @Override
     public void onCreate() {
-        Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();
-
-
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -38,14 +38,24 @@ public class Overlay extends Service {
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
                 PixelFormat.TRANSLUCENT);
 
+        final WindowManager.LayoutParams darkParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                PixelFormat.TRANSLUCENT);
+
 
         params.gravity = Gravity.BOTTOM | Gravity.START;
         params.x = 0;
         params.y = 0;
 
         mView = LayoutInflater.from(this).inflate(R.layout.overlay, null);
+        darkView = LayoutInflater.from(this).inflate(R.layout.dark, null);
 
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        wm.addView(darkView, darkParams);
         wm.addView(mView, params);
 
         mView.setOnTouchListener(new View.OnTouchListener() {
@@ -99,6 +109,15 @@ public class Overlay extends Service {
                 .setContentText("").build();
 
         startForeground(1, notification);
+
+        updateRunnable = () -> {
+            RenderView.renderView.invalidate();
+            Darkness.darkness.invalidate();
+            handler.postDelayed(updateRunnable, 1000);
+
+        };
+        handler = new Handler();
+        handler.postDelayed(updateRunnable, 1000);
     }
 
     @Nullable

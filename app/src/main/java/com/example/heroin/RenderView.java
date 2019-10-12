@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -15,12 +14,13 @@ import java.util.List;
 
 
 public class RenderView extends View {
+
+    public static RenderView renderView;
+
     private final static int FRAMES = 10;
     private final int SPRITE_WIDTH;
     private final int SPRITE_HEIGHT;
 
-    private final Handler handler;
-    private final Runnable drawingRunnable;
     private final Paint paint;
     private final List<Bitmap> bitmaps = new LinkedList<>();
     private final Rect src;
@@ -44,13 +44,7 @@ public class RenderView extends View {
         SPRITE_HEIGHT = bitmaps.get(0).getHeight();
         src = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         dest = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-        drawingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                invalidate();
-            }
-        };
-        handler = new Handler();
+        renderView = this;
     }
 
     @Override
@@ -64,7 +58,6 @@ public class RenderView extends View {
             canvas.drawBitmap(bitmap, src, dest, paint);
         }
 
-        handler.postDelayed(drawingRunnable, 1000);
         frame = (frame + 1) % FRAMES;
     }
 

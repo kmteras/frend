@@ -48,17 +48,6 @@ public class MainActivity extends AppCompatActivity {
         super.onUserLeaveHint();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        ActivityManager activityManager = (ActivityManager) getApplicationContext()
-                .getSystemService(Context.ACTIVITY_SERVICE);
-
-        activityManager.moveTaskToFront(getTaskId(), 0);
-        Log.d("onPause", "- ON PAUSE -");
-    }
-
 
 
     /**

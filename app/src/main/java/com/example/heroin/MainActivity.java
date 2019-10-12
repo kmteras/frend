@@ -2,6 +2,7 @@ package com.example.heroin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,17 +14,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        startForegroundService(new Intent(MainActivity.this, Overlay.class));
+        button = findViewById(R.id.startButton);
 
-
-//        button = findViewById(R.id.button);
-//
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startForegroundService(new Intent(MainActivity.this, Overlay.class));
-//            }
-//        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startForegroundService(new Intent(MainActivity.this, Overlay.class));
+            }
+        });
     }
 }

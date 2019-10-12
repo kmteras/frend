@@ -13,8 +13,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,8 +22,6 @@ public class Overlay extends Service {
     View mView;
 
     LayoutInflater inflate;
-    TextView t;
-    Button b;
 
     @Override
     public void onCreate() {
@@ -56,17 +52,8 @@ public class Overlay extends Service {
         inflate = (LayoutInflater) getBaseContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        mView = inflate.inflate(R.layout.activity_main, null);
-
-        b = mView.findViewById(R.id.button);
-        t = mView.findViewById(R.id.text);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                t.setText("yes you click me ");
-
-            }
-        });
+//        mView = inflate.inflate(R.layout.overlay, null);
+        mView = LayoutInflater.from(this).inflate(R.layout.overlay, null);
 
         wm.addView(mView, params);
 

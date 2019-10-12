@@ -130,5 +130,6 @@ public class Overlay extends Service {
     public void onDestroy() {
         super.onDestroy();
         wm.removeViewImmediate(mView);
+        wm.removeViewImmediate(darkView);
     }
 }

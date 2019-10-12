@@ -15,6 +15,8 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
@@ -29,20 +31,33 @@ public class MainActivity extends AppCompatActivity {
         //   - create button with image
         //   - for the button add onClick method that launches the app UNDERNEATH current one
         //   - AND changes app overlay view
-        //button = findViewById(R.id.startButton);
+//        button = findViewById(R.id.stopButton);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // TODO: Stop service
+//            }
+//        });
 
-        ImageView chromeIcon = (ImageView) findViewById(R.id.chromeButton);
+        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> pkgAppsList = this.getPackageManager().queryIntentActivities( mainIntent, 0);
+        pkgAppsList.forEach(r -> Log.d("Test", r.activityInfo.parentActivityName));
+
+
+
+
+
+
+
+
+        ImageView chromeIcon = findViewById(R.id.chromeButton);
         chromeIcon.setImageDrawable(getActivityIcon(this, "com.android.chrome", "com.google.android.apps.chrome.Main"));
 
         chromeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startForegroundService(new Intent(MainActivity.this, Overlay.class));
-
-                // TODO: Some safe app like drawing or similar
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
-                Log.d("Test", "Starting chrome");
-                startActivity(launchIntent);
             }
         });
     }
@@ -69,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityManager activityManager = (ActivityManager) getApplicationContext()
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
-        activityManager.moveTaskToFront(getTaskId(), 0);
+//        activityManager.moveTaskToFront(getTaskId(), 0);
         Log.d("onPause", "- ON PAUSE -");
     }
 }

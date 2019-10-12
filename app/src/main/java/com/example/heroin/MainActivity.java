@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         exitButton.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Darkness.modal = true;
+
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.close_dialog, null);
                 EditText pin = mView.findViewById(R.id.pin);
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                 confirm.setOnClickListener(v1 -> {
                     if (pin.getText().toString().equals(correctPin)) {
                         stopService(service);
+                        finishAffinity();
                         finishAndRemoveTask();
                     } else {
                         Toast.makeText(MainActivity.this, "Wrong PIN code",
@@ -58,6 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
                 mBuilder.setView(mView);
                 AlertDialog dialog = mBuilder.create();
+                dialog.setOnDismissListener(d -> {
+                });
+
+                dialog.setOnCancelListener(c -> {
+                    Darkness.modal = false;
+                });
+
                 dialog.show();
             }
         }));

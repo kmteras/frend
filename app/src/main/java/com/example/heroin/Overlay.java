@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -19,14 +20,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class Overlay extends Service {
-    View mView;
+    private View mView;
+    private WindowManager wm;
 
     @Override
     public void onCreate() {
         Toast.makeText(getBaseContext(), "onCreate", Toast.LENGTH_LONG).show();
 
 
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
@@ -44,8 +46,57 @@ public class Overlay extends Service {
 
         mView = LayoutInflater.from(this).inflate(R.layout.overlay, null);
 
-        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         wm.addView(mView, params);
+
+        mView.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX;
+            private int initialY;
+            private float initialTouchX;
+            private float initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+
+                        //remember the initial position.
+                        initialX = params.x;
+                        initialY = params.y;
+
+
+                        //get the touch location
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+
+
+                        return true;
+                    case MotionEvent.ACTION_UP:
+
+                        //Add code for launching application and positioning the widget to nearest edge.
+
+
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+
+
+                        float Xdiff = Math.round(event.getRawX() - initialTouchX);
+                        float Ydiff = Math.round(event.getRawY() - initialTouchY);
+
+
+                        //Calculate the X and Y coordinates of the view.
+                        params.x = initialX + (int) Xdiff;
+                        params.y = initialY + (int) Ydiff;
+
+                        //Update the layout with new X & Y coordinates
+                        wm.updateViewLayout(mView, params);
+
+
+                        return true;
+                }
+                return false;
+            }
+        });
 
         String CHANNEL_ID = "my_channel_01";
 

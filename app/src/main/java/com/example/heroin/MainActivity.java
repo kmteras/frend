@@ -1,13 +1,19 @@
 package com.example.heroin;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,17 +30,12 @@ public class MainActivity extends AppCompatActivity {
         //   - create button with image
         //   - for the button add onClick method that launches the app UNDERNEATH current one
         //   - AND changes app overlay view
-        button = findViewById(R.id.startButton);
+        //button = findViewById(R.id.startButton);
 
-        startForegroundService(new Intent(MainActivity.this, Overlay.class));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setTurnScreenOn(true);
-        }
+        ImageView chromeIcon = (ImageView) findViewById(R.id.chromeButton);
+        chromeIcon.setImageDrawable(getActivityIcon(this, "com.android.chrome", "com.google.android.apps.chrome.Main"));
 
-        button.setOnClickListener(new View.OnClickListener() {
+        chromeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startForegroundService(new Intent(MainActivity.this, Overlay.class));
@@ -45,21 +46,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    @Override public boolean onKeyDown ( int keyCode, KeyEvent event){
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.d("Test", "Back button pressed!");
-            return false;
-        } else if (keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_MOVE_HOME) {
-            Log.d("Test", "Home button pressed!");
-            return false;
-        }
-        return super.onKeyDown(keyCode, event);
+/*
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+
+        button = findViewById(R.id.startButton);
+        Log.d("Test", "InonCreate");
+        ImageView chromeIcon = findViewById(button.getId());
+        chromeIcon.setImageDrawable(
+                getActivityIcon(
+                        this,
+                        "com.android.chrome",
+                        "com.google.android.apps.chrome.Main"
+                )
+        );
+        super.onCreate(savedInstanceState, persistentState);
+    }
+*/
+
+    public static Drawable getActivityIcon(Context context, String packageName, String activityName) {
+        PackageManager pm = context.getPackageManager();
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(packageName, activityName));
+        ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
+
+        return resolveInfo.loadIcon(pm);
     }
 
-    @Override
-    protected void onUserLeaveHint()
-    {
-        Log.d("onUserLeaveHint","User left the app");
-        super.onUserLeaveHint();
-    }
 }

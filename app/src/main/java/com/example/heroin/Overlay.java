@@ -60,6 +60,9 @@ public class Overlay extends Service {
                 .setContentText("").build();
 
         startForeground(1, notification);
+        // TODO: Some safe app like drawing or similar
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
+        startActivity(launchIntent);
     }
 
     @Nullable

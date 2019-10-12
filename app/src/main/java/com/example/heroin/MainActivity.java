@@ -36,15 +36,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(30), true));
 
-    }
-
-    public static Drawable getActivityIcon(Context context, String packageName, String activityName) {
-        PackageManager pm = context.getPackageManager();
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName(packageName, activityName));
-        ResolveInfo resolveInfo = pm.resolveActivity(intent, 0);
-
-        return resolveInfo.loadIcon(pm);
+        findViewById(R.id.openSettings).setOnClickListener(v -> {
+            Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivityForResult(intent, 0);
+        });
     }
 
     @Override

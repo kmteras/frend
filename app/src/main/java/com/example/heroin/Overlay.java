@@ -41,7 +41,7 @@ public class Overlay extends Service {
 
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 0;
-        params.y = 0;
+        params.y = 10000; // TODO: Maybe get screen edge or sth not to potentially draw offscreen
 
         mView = LayoutInflater.from(this).inflate(R.layout.overlay, null);
 

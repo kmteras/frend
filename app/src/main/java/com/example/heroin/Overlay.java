@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -59,27 +58,16 @@ public class Overlay extends Service {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-
                         //remember the initial position.
                         initialX = params.x;
                         initialY = params.y;
-
 
                         //get the touch location
                         initialTouchX = event.getRawX();
                         initialTouchY = event.getRawY();
 
-
-                        return true;
-                    case MotionEvent.ACTION_UP:
-
-                        //Add code for launching application and positioning the widget to nearest edge.
-
-
                         return true;
                     case MotionEvent.ACTION_MOVE:
-
-
                         float Xdiff = Math.round(event.getRawX() - initialTouchX);
                         float Ydiff = Math.round(event.getRawY() - initialTouchY);
 

@@ -35,7 +35,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startForegroundService(new Intent(MainActivity.this, Overlay.class));
+            }
+        });
 
+        findViewById(R.id.openSettings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivityForResult(intent, 0);
             }
         });
     }

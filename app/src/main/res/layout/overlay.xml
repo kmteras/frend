@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout"
+    android:id="@+id/widget"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:orientation="vertical"
-    android:backgroundTint="@color/colorPrimary"
     android:visibility="visible">
 
-    <RelativeLayout
-        android:id="@+id/widget"
+    <TextView
+        android:id="@+id/testText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_input_add"/>
+        android:text="Hello World!" />
 
 </RelativeLayout>

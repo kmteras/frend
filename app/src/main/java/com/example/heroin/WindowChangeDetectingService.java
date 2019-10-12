@@ -3,6 +3,7 @@ package com.example.heroin;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -35,8 +36,16 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
                 ActivityInfo activityInfo = tryGetActivity(componentName);
                 boolean isActivity = activityInfo != null;
-                if (isActivity)
+                if (isActivity) {
+                    Log.i("ActivityInfo", activityInfo.toString());
                     Log.i("CurrentActivity", componentName.flattenToShortString());
+                    if (!componentName.flattenToShortString().contains("com.example.heroin/.MainActivity")
+                            && !componentName.flattenToShortString().contains("com.android.settings")) {
+                        Log.i("AccessibilityEvent", "Opening new app");
+                        Intent launchHeroin = getPackageManager().getLaunchIntentForPackage("com.example.heroin");
+                        startActivity(launchHeroin);
+                    }
+                }
             }
         }
     }

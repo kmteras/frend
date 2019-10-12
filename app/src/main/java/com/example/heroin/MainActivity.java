@@ -14,14 +14,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,24 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-        // TODO: For each app we want to display in the launcher loop:
-        //   - create button with image
-        //   - for the button add onClick method that launches the app UNDERNEATH current one
-        //   - AND changes app overlay view
-//        button = findViewById(R.id.stopButton);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO: Stop service
-//            }
-//        });
-
-//        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-//        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-//        List<ResolveInfo> pkgAppsList = this.getPackageManager().queryIntentActivities( mainIntent, 0);
-//        pkgAppsList.forEach(r -> Log.d("Test", r.activityInfo.parentActivityName));
+        startForegroundService(new Intent(MainActivity.this, Overlay.class));
 
 
         RecyclerView recyclerView = findViewById(R.id.RView);
@@ -57,19 +36,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(30), true));
 
-
-
-
-
-//        ImageView chromeIcon = findViewById(R.id.chromeButton);
-//        chromeIcon.setImageDrawable(getActivityIcon(this, "com.android.chrome", "com.google.android.apps.chrome.Main"));
-//
-//        chromeIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startForegroundService(new Intent(MainActivity.this, Overlay.class));
-//            }
-//        });
     }
 
     public static Drawable getActivityIcon(Context context, String packageName, String activityName) {
@@ -94,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityManager activityManager = (ActivityManager) getApplicationContext()
                 .getSystemService(Context.ACTIVITY_SERVICE);
 
-//        activityManager.moveTaskToFront(getTaskId(), 0);
+        activityManager.moveTaskToFront(getTaskId(), 0);
         Log.d("onPause", "- ON PAUSE -");
     }
 

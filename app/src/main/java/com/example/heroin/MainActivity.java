@@ -9,6 +9,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button button;
-    private Button exitButton;
     private Intent service;
-    private AlertDialog.Builder exitDialog;
+
+    private static final String correctPin = "1111";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,21 +30,37 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
+
         setContentView(R.layout.activity_main);
-        exitButton = findViewById(R.id.exit);
-        exitDialog = new AlertDialog.Builder(this);
+
+        Button exitButton = findViewById(R.id.exit);
 
         service = new Intent(MainActivity.this, Overlay.class);
         startForegroundService(service);
+
         exitButton.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopService(service);
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.close_dialog, null);
+                EditText pin = mView.findViewById(R.id.pin);
+                Button confirm = mView.findViewById(R.id.confirm);
 
-                finishAndRemoveTask();
+                confirm.setOnClickListener(v1 -> {
+                    if (pin.getText().toString().equals(correctPin)) {
+                        stopService(service);
+                        finishAndRemoveTask();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Wrong PIN code",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
             }
         }));
-        startForegroundService(new Intent(MainActivity.this, Overlay.class));
 
 
         RecyclerView recyclerView = findViewById(R.id.RView);

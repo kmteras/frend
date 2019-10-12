@@ -39,8 +39,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 if (isActivity) {
                     Log.i("ActivityInfo", activityInfo.toString());
                     Log.i("CurrentActivity", componentName.flattenToShortString());
-                    if (!componentName.flattenToShortString().contains("com.example.heroin/.MainActivity")
-                            && !componentName.flattenToShortString().contains("com.android.settings")) {
+                    if (isNotAllowedApp(componentName)) {
                         Log.i("AccessibilityEvent", "Opening new app");
                         Intent launchHeroin = getPackageManager().getLaunchIntentForPackage("com.example.heroin");
                         startActivity(launchHeroin);
@@ -48,6 +47,14 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 }
             }
         }
+    }
+
+    private boolean isNotAllowedApp(ComponentName componentName) {
+        boolean supportedApp = SupportedApplicationsHelper.getListOfSupportedApplications().stream().anyMatch(n -> componentName.flattenToShortString().startsWith(n));
+        Log.d("Test", "Testing if app is allowed. Getting result: " + supportedApp + " for app " + componentName.flattenToShortString());
+        boolean ret = !componentName.flattenToShortString().contains("com.example.heroin/.MainActivity")
+                && !componentName.flattenToShortString().contains("com.android.settings");
+        return !supportedApp && ret;
     }
 
     private ActivityInfo tryGetActivity(ComponentName componentName) {

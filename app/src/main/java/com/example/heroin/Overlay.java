@@ -39,7 +39,7 @@ public class Overlay extends Service {
                 PixelFormat.TRANSLUCENT);
 
 
-        params.gravity = Gravity.TOP | Gravity.START;
+        params.gravity = Gravity.BOTTOM | Gravity.START;
         params.x = 0;
         params.y = 0;
 
@@ -74,7 +74,7 @@ public class Overlay extends Service {
 
                         //Calculate the X and Y coordinates of the view.
                         params.x = initialX + (int) Xdiff;
-                        params.y = initialY + (int) Ydiff;
+                        params.y = initialY - (int) Ydiff;
 
                         //Update the layout with new X & Y coordinates
                         wm.updateViewLayout(mView, params);

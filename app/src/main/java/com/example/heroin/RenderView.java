@@ -15,7 +15,6 @@ import java.util.List;
 
 
 public class RenderView extends View {
-    private final static int SCALE_FACTOR = 4;
     private final static int FRAMES = 10;
     private final int SPRITE_WIDTH;
     private final int SPRITE_HEIGHT;
@@ -58,8 +57,8 @@ public class RenderView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        src.left = frame * SPRITE_WIDTH;
-        src.right = frame * SPRITE_WIDTH + SPRITE_WIDTH;
+        src.left = frame * SPRITE_WIDTH + 1;
+        src.right = frame * SPRITE_WIDTH + SPRITE_WIDTH - 1;
 
         for (Bitmap bitmap : bitmaps) {
             canvas.drawBitmap(bitmap, src, dest, paint);
@@ -70,9 +69,6 @@ public class RenderView extends View {
     }
 
     private Bitmap scaleBitmap(int id) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), id);
-        return Bitmap.createScaledBitmap(bitmap,
-                bitmap.getWidth() * SCALE_FACTOR,
-                bitmap.getHeight() * SCALE_FACTOR, false);
+        return BitmapFactory.decodeResource(getResources(), id);
     }
 }

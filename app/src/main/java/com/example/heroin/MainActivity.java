@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startForegroundService(new Intent(MainActivity.this, Overlay.class));
+                startForegroundService(new Intent(MainActivity.this, Overlay.class));
 
                 // TODO: Some safe app like drawing or similar
                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");

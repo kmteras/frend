@@ -16,12 +16,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        // TODO: For each app we want to display in the launcher loop:
+        //   - create button with image
+        //   - for the button add onClick method that launches the app UNDERNEATH current one
+        //   - AND changes app overlay view
         button = findViewById(R.id.startButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startForegroundService(new Intent(MainActivity.this, Overlay.class));
+                //startForegroundService(new Intent(MainActivity.this, Overlay.class));
+
+                // TODO: Some safe app like drawing or similar
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.android.chrome");
+                startActivity(launchIntent);
             }
         });
     }

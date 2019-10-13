@@ -17,44 +17,79 @@
 <style>
     body {
         font-family: 'Montserrat', sans-serif;
+        padding: 0;
+        margin: 0;
     }
 
     .logo-text {
         margin-left: 55%;
         font-size: 72px;
         margin-top: 50px;
-        position: fixed;
+        position: absolute;
     }
 
     p {
         font-size: 1.8em;
     }
 
+    i {
+        font-size: 3em !important;
+        display: inline-block;
+    }
+
     .custom-card {
         border-radius: 0.8em;
         border: gainsboro solid 1px;
         background-color: #FAFAFA;
-        padding: 0.8em 0.8em;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
         margin: 0.5em 0.5em 2em;
+        padding: 0.8em 0.8em;
+        z-index: 10000;
     }
+
+    .custom-card h1 {
+        padding: 0;
+        margin: 0;
+    }
+
+    .custom-card:hover {
+        background-color: #007bff;
+        color: #FAFAFA;
+        cursor: pointer;
+    }
+
+    .os-block {
+        padding: 0 10em
+    }
+
 
 </style>
 <body>
-<div style="margin-top: 60px">
-    <h1 class="logo-text">Frend</h1>
-    <img src="img/cat.png" alt="" style="margin-left: 30%">
+<div class="container-fluid">
+    <div style="margin-top: 60px">
+        <h1 class="logo-text">Frend</h1>
+        <img src="img/cat.png" alt="" style="margin-left: 30%">
 
-    <p style="text-align: center; margin-top: 2em">
-        Frend is a digital tool that keeps your child safe from screen addiction during their first discovery of the
-        digital world.<br>
-        Frend is a gamified app that turns your phone into your kid’s digital companion that helps to moderate screen
-        time and establish healthy device usage habits.<br>
-        Download Frend for FREE to shelter your child from screen addiction. Upgrade when you know it works.
-    </p>
+        <p style="text-align: center; margin-top: 2em">
+            Frend is a digital tool that keeps your child safe from screen addiction during their first discovery of the
+            digital world.<br>
+            Frend is a gamified app that turns your phone into your kid’s digital companion that helps to moderate
+            screen
+            time and establish healthy device usage habits.<br>
+            Download Frend for FREE to shelter your child from screen addiction. Upgrade when you know it works.
+        </p>
 
-    <div class="download-links">
-        <div class="custom-card">
+        <div class="row">
+            <div class="col-6 os-block">
+                <div class="custom-card">
+                    <h1 style="text-align: center">FREE TRIAL</h1>
+                </div>
+            </div>
+            <div class="col-6 os-block">
+                <div class="custom-card">
+                    <h1 style="text-align: center">ONE TIME PAYMENT</h1>
+                </div>
+            </div>
         </div>
     </div>
 </div>

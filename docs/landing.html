@@ -10,7 +10,9 @@
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous">
     </script>
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Neucha&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          rel="stylesheet">
     <meta charset="UTF-8">
     <title>Fred</title>
 </head>
@@ -19,13 +21,15 @@
         font-family: 'Montserrat', sans-serif;
         padding: 0;
         margin: 0;
+        background: #CABEAB;
     }
 
     .logo-text {
         margin-left: 55%;
-        font-size: 72px;
+        font-size: 120px;
         margin-top: 50px;
         position: absolute;
+        font-family: 'Neucha', cursive;
     }
 
     p {
@@ -62,22 +66,43 @@
         padding: 0 10em
     }
 
+    .pillow {
+        position: absolute;
+        z-index: -1;
+        margin-left: 30%;
+        margin-top: 17%;
+    }
+
+    .text-back {
+        margin-top: 11em;
+        color: black;
+    }
+
+
 
 </style>
 <body>
 <div class="container-fluid">
     <div style="margin-top: 60px">
         <h1 class="logo-text">Frend</h1>
-        <img src="img/cat.png" alt="" style="margin-left: 30%">
+        <img src="img/pillow.png" class="pillow" alt="" width="30%" height="30%">
+        <img src="img/cat.png" alt="" style="margin-left: 30%; margin-top: -2%">
 
-        <p style="text-align: center; margin-top: 2em">
-            Frend is a digital tool that keeps your child safe from screen addiction during their first discovery of the
-            digital world.<br>
-            Frend is a gamified app that turns your phone into your kid’s digital companion that helps to moderate
-            screen
-            time and establish healthy device usage habits.<br>
-            Download Frend for FREE to shelter your child from screen addiction. Upgrade when you know it works.
-        </p>
+        <div class="text-back">
+            <p style="text-align: center;">
+                Frend is a digital tool that keeps your child safe from screen addiction during
+                their first discovery of
+                the
+                digital world.<br>
+                Frend is a gamified app that turns your phone into your kid’s digital companion that
+                helps to moderate
+                screen
+                time and establish healthy device usage habits.<br>
+                Download Frend for FREE to shelter your child from screen addiction. Upgrade when
+                you know it works.
+            </p>
+        </div>
+
 
         <div class="row">
             <div class="col-6 os-block">
@@ -93,6 +118,5 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>

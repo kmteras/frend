@@ -12,6 +12,7 @@ import android.graphics.Rect;
 import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         stopService(service);
                         finishAffinity();
                         finishAndRemoveTask();
+                        finish();
                     }
                 });
             } else {
@@ -109,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onUserLeaveHint() {
         Log.d("onUserLeaveHint", "User left the app");
         super.onUserLeaveHint();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Process.killProcess(Process.myPid());
+        super.onDestroy();
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -31,13 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int PIN_RESULT_CODE = 111;
     private NotificationManager notificationManager;
-    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = this.getSharedPreferences(this.getPackageName(), MODE_PRIVATE);
-        preferences.edit().putBoolean(WindowChangeDetectingService.ACTIVE, true);
         hideActionBar();
         setContentView(R.layout.activity_main);
         startService();
@@ -125,18 +121,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        Log.d("Test", "In onDestroy!  Closing app forceably!");
         Process.killProcess(Process.myPid());
         super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("TEST", "Got activity result and will check code");
         if (requestCode == PIN_RESULT_CODE) {
-            Log.d("Test", "Correct code, will check result");
             if (resultCode == RESULT_OK) {
-                Log.d("Test", "Correct result, closing app!");
                 closeApp();
             }
         }
@@ -146,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
         stopService(service);
         finishAffinity();
         finishAndRemoveTask();
-        preferences.edit().putBoolean(WindowChangeDetectingService.ACTIVE, true);
         notificationManager.cancelAll();
         finish();
     }

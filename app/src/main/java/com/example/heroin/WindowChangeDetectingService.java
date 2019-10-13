@@ -14,8 +14,6 @@ import android.view.accessibility.AccessibilityEvent;
 
 public class WindowChangeDetectingService extends AccessibilityService {
 
-    public static final String ACTIVE = "active";
-
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
@@ -32,12 +30,9 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        SharedPreferences preferences = this.getSharedPreferences(this.getPackageName(), MODE_PRIVATE);
-
-        boolean activeApp = preferences.getBoolean(ACTIVE, true);
 
 
-        if ( activeApp && event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             if (event.getPackageName() != null && event.getClassName() != null) {
                 ComponentName componentName = new ComponentName(
                         event.getPackageName().toString(),

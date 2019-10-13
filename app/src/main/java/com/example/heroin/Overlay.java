@@ -132,7 +132,6 @@ public class Overlay extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d("Test", "In Overlay onDestory!");
         super.onDestroy();
         wm.removeViewImmediate(mView);
         wm.removeViewImmediate(darkView);

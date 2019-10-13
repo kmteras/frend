@@ -16,7 +16,7 @@ public class Darkness extends View {
     private static final int WAKE_TIME = 90; // in seconds
 
     private static Instant resetTime = Instant.now();
-    private boolean sleeping = false;
+    public static boolean sleeping = false;
     public static int opacity = 0;
     public static boolean modal = false;
 

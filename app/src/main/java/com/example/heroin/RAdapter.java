@@ -34,17 +34,16 @@ public class RAdapter extends RecyclerView.Adapter<RAdapter.ViewHolder> {
         }
 
         @Override
-        public void onClick (View v) {
+        public void onClick(View v) {
             int pos = getAdapterPosition();
             Context context = v.getContext();
-
-            Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(appsList.get(pos).packageName.toString());
-            context.startActivity(launchIntent);
-            Toast.makeText(v.getContext(), appsList.get(pos).label.toString(), Toast.LENGTH_LONG).show();
-
+            if (!Darkness.sleeping) {
+                Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(appsList.get(pos).packageName.toString());
+                context.startActivity(launchIntent);
+                Toast.makeText(v.getContext(), appsList.get(pos).label.toString(), Toast.LENGTH_LONG).show();
+            }
         }
     }
-
 
 
     public RAdapter(Context c) {
@@ -62,12 +61,12 @@ public class RAdapter extends RecyclerView.Adapter<RAdapter.ViewHolder> {
         allApps.stream()
                 .filter(r -> SupportedApplicationsHelper.getListOfSupportedApplications().contains(r.activityInfo.packageName))
                 .forEach(ri -> {
-            AppInfo app = new AppInfo();
-            app.label = ri.loadLabel(pm);
-            app.packageName = ri.activityInfo.packageName;
-            app.icon = ri.activityInfo.loadIcon(pm);
-            appsList.add(app);
-        });
+                    AppInfo app = new AppInfo();
+                    app.label = ri.loadLabel(pm);
+                    app.packageName = ri.activityInfo.packageName;
+                    app.icon = ri.activityInfo.loadIcon(pm);
+                    appsList.add(app);
+                });
 
     }
 

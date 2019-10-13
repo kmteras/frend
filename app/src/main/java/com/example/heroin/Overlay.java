@@ -121,11 +121,11 @@ public class Overlay extends Service {
         updateRunnable = () -> {
             RenderView.renderView.invalidate();
             Darkness.darkness.invalidate();
-            handler.postDelayed(updateRunnable, 1000);
+            handler.postDelayed(updateRunnable, 24);
 
         };
         handler = new Handler();
-        handler.postDelayed(updateRunnable, 1000);
+        handler.postDelayed(updateRunnable, 300);
     }
 
     @Nullable

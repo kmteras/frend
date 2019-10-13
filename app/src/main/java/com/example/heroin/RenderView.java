@@ -32,7 +32,9 @@ public class RenderView extends View {
     private final static int Y_FRAMES_SLEEP = 15;
 
     private final int SPRITE_WIDTH;
+    private final int SPRITE_WIDTH_SLEEP;
     private final int SPRITE_HEIGHT;
+    private final int SPRITE_HEIGHT_SLEEP;
 
     private final Paint paint;
     private final Bitmap idleSpritemap;
@@ -54,6 +56,8 @@ public class RenderView extends View {
         sleepSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.new_sleep);
         SPRITE_WIDTH = idleSpritemap.getWidth() / X_FRAMES;
         SPRITE_HEIGHT = idleSpritemap.getHeight() / Y_FRAMES;
+        SPRITE_WIDTH_SLEEP = sleepSpritemap.getHeight() / X_FRAMES_SLEEP;
+        SPRITE_HEIGHT_SLEEP = sleepSpritemap.getWidth() / Y_FRAMES_SLEEP;
         src = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         dest = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         renderView = this;
@@ -84,10 +88,10 @@ public class RenderView extends View {
                 }
             }
 
-            src.left = (curFrame % X_FRAMES_SLEEP) * SPRITE_WIDTH;
-            src.right = (curFrame % X_FRAMES_SLEEP) * SPRITE_WIDTH + SPRITE_WIDTH;
-            src.top = (curFrame / X_FRAMES_SLEEP) * SPRITE_HEIGHT;
-            src.bottom = (curFrame / X_FRAMES_SLEEP) * SPRITE_HEIGHT + SPRITE_HEIGHT;
+            src.left = (curFrame % X_FRAMES_SLEEP) * SPRITE_WIDTH_SLEEP;
+            src.right = (curFrame % X_FRAMES_SLEEP) * SPRITE_WIDTH_SLEEP + SPRITE_WIDTH_SLEEP;
+            src.top = (curFrame / X_FRAMES_SLEEP) * SPRITE_HEIGHT_SLEEP;
+            src.bottom = (curFrame / X_FRAMES_SLEEP) * SPRITE_HEIGHT_SLEEP + SPRITE_HEIGHT_SLEEP;
 
             canvas.drawBitmap(sleepSpritemap, src, dest, paint);
         }

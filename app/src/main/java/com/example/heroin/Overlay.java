@@ -19,6 +19,8 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import static android.app.PendingIntent.getActivity;
+
 public class Overlay extends Service {
     private View mView;
     private View darkView;
@@ -107,13 +109,25 @@ public class Overlay extends Service {
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);;
 
+        Intent closeIntent = new Intent();
+        Intent settingsIntent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Frend")
                 .setContentText("Go back to your friend")
                 .setSmallIcon(R.drawable.heroicon)
                 .setContentIntent(pendingIntent)
+                .addAction(
+                        0, // TODO:  Need to change this?
+                        "CLOSE APP",
+                        getActivity(this, 0, closeIntent, 0)
+                )
+                .addAction(
+                        0, // TODO:  Need to change this?
+                        "SETTINGS",
+                        getActivity(this, 0, settingsIntent, 0)
+                )
                 .build();
 
         startForeground(1, notification);

@@ -75,11 +75,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(radapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(30), true));
-
-        findViewById(R.id.openSettings).setOnClickListener(v -> {
-            Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-            startActivityForResult(intent, 0);
-        });
     }
 
     @Override

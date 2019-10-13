@@ -102,22 +102,12 @@ public class MainActivity extends AppCompatActivity {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);
 
-        KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        Intent closeIntent = mKeyguardManager
-                .createConfirmDeviceCredentialIntent(
-                        "Unlock to close",
-                        "Please input PIN code");
         Intent settingsIntent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Frend")
                 .setContentText("Go back to your friend")
                 .setSmallIcon(R.drawable.heroicon)
                 .setContentIntent(pendingIntent)
-                .addAction(
-                        0, // TODO:  Need to change this?
-                        "CLOSE APP",
-                        getActivity(this, PIN_RESULT_CODE, closeIntent, 0)
-                )
                 .addAction(
                         0, // TODO:  Need to change this?
                         "SETTINGS",

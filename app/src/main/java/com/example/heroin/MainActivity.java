@@ -1,10 +1,18 @@
 package com.example.heroin;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.KeyguardManager;
+import android.app.admin.DevicePolicyManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -17,11 +25,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     private Intent service;
 
     private static final String correctPin = "1111";
+
+    private int PIN_RESULT_CODE = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,37 +51,46 @@ public class MainActivity extends AppCompatActivity {
         service = new Intent(MainActivity.this, Overlay.class);
         startForegroundService(service);
 
-        exitButton.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Darkness.modal = true;
+        Executor executor = Executors.newSingleThreadExecutor();
 
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.close_dialog, null);
-                EditText pin = mView.findViewById(R.id.pin);
-                Button confirm = mView.findViewById(R.id.confirm);
+        exitButton.setOnClickListener((v -> {
+            Darkness.modal = true;
 
-                confirm.setOnClickListener(v1 -> {
-                    if (pin.getText().toString().equals(correctPin)) {
+            BiometricPrompt biometricPrompt = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                biometricPrompt = new BiometricPrompt.Builder(this)
+                        .setTitle("Use finger to close app")
+                        .setSubtitle("Please use it")
+                        .setNegativeButton("Cancel", executor, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).build();
+
+                biometricPrompt.authenticate(new CancellationSignal(), executor, new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
                         stopService(service);
                         finishAffinity();
                         finishAndRemoveTask();
-                    } else {
-                        Toast.makeText(MainActivity.this, "Wrong PIN code",
-                                Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
+            } else {
+                KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+                if (mKeyguardManager == null) {
+                    stopService(service);
+                    finishAffinity();
+                    finishAndRemoveTask();
+                    return;
+                }
+                Intent intent = mKeyguardManager
+                        .createConfirmDeviceCredentialIntent(
+                                "Unlock to close",
+                                "Please input PIN code");
 
-                mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.setOnDismissListener(d -> {
-                });
-
-                dialog.setOnCancelListener(c -> {
-                    Darkness.modal = false;
-                });
-
-                dialog.show();
+                startActivityForResult(intent, 111);
             }
         }));
 
@@ -91,6 +113,22 @@ public class MainActivity extends AppCompatActivity {
         super.onUserLeaveHint();
     }
 
+    @Override
+    protected void onDestroy() {
+        Process.killProcess(Process.myPid());
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 111) {
+            if (resultCode == RESULT_OK) {
+                stopService(service);
+                finishAffinity();
+                finishAndRemoveTask();
+            }
+        }
+    }
 
     /**
      * USING BORROWED CODE FROM: https://www.androidhive.info/2016/05/android-working-with-card-view-and-recycler-view/?utm_source=recyclerview&utm_medium=site&utm_campaign=refer_article

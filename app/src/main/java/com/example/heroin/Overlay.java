@@ -8,6 +8,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
+import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.view.Gravity;
@@ -20,11 +22,15 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 public class Overlay extends Service {
+    private static final long AUDIO_FREQ = 10000;
+
+    private long lastTime = 0;
     private View mView;
     private View darkView;
     private WindowManager wm;
     private Handler handler;
     private Runnable updateRunnable;
+    private MediaPlayer mediaPlayer;
 
     @Override
     public void onCreate() {
@@ -59,6 +65,11 @@ public class Overlay extends Service {
         wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         wm.addView(darkView, darkParams);
         wm.addView(mView, params);
+
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.cat_purr);
+        mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build());
 
         mView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
@@ -124,9 +135,19 @@ public class Overlay extends Service {
             Darkness.darkness.invalidate();
             handler.postDelayed(updateRunnable, 24);
 
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - lastTime > AUDIO_FREQ) {
+                playAudio();
+                lastTime = currentTime;
+            }
         };
         handler = new Handler();
         handler.postDelayed(updateRunnable, 300);
+    }
+
+    private void playAudio() {
+        mediaPlayer.start();
     }
 
     @Nullable

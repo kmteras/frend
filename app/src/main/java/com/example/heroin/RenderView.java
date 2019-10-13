@@ -15,6 +15,12 @@ import java.util.List;
 
 public class RenderView extends View {
 
+    public enum AnimationState {
+        IDLE,
+        SLEEP_TRANSITION,
+        SLEEP
+    }
+
     public static RenderView renderView;
 
     private final static int FRAMES = 21;
@@ -27,6 +33,12 @@ public class RenderView extends View {
     private final Rect dest;
 
     private int frame = 0;
+    private int frameIndex = 0;
+
+    public AnimationState currentState = AnimationState.SLEEP;
+    private int[] idleFrames = {0, 1, 2, 3, 4, 5};
+    private int[] transitionFrames = {6, 7, 8, 9, 10, 11, 12, 13};
+    private int[] sleepFrames = {14, 15, 16, 17, 18, 19, 20};
 
     public RenderView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,7 +70,20 @@ public class RenderView extends View {
             canvas.drawBitmap(bitmap, src, dest, paint);
         }
 
-        frame = (frame + 1) % FRAMES;
+        switch (currentState) {
+            case IDLE:
+                frameIndex = (frameIndex + 1) % idleFrames.length;
+                frame = idleFrames[frameIndex];
+                break;
+            case SLEEP_TRANSITION:
+                frameIndex = (frameIndex + 1) % transitionFrames.length;
+                frame = transitionFrames[frameIndex];
+                break;
+            case SLEEP:
+                frameIndex = (frameIndex + 1) % sleepFrames.length;
+                frame = sleepFrames[frameIndex];
+                break;
+        }
     }
 
     private Bitmap scaleBitmap(int id) {

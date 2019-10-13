@@ -43,13 +43,16 @@ public class Darkness extends View {
             } else if (wakingUp()) {
                 reduceOpacity();
             }
+            RenderView.renderView.currentState = RenderView.AnimationState.SLEEP;
         } else {
             if (sleepRequired()) {
                 sleeping = true;
                 opacity = 255;
             } else if (goingToSleep()) {
                 increaseOpacity();
+                RenderView.renderView.currentState = RenderView.AnimationState.SLEEP_TRANSITION;
             }
+            RenderView.renderView.currentState = RenderView.AnimationState.IDLE;
         }
     }
 

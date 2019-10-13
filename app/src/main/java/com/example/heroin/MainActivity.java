@@ -55,41 +55,19 @@ public class MainActivity extends AppCompatActivity {
         exitButton.setOnClickListener((v -> {
             Darkness.modal = true;
 
-            BiometricPrompt biometricPrompt = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                biometricPrompt = new BiometricPrompt.Builder(this)
-                        .setTitle("Use finger to close app")
-                        .setSubtitle("Please use it")
-                        .setNegativeButton("Cancel", executor, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).build();
-
-                biometricPrompt.authenticate(new CancellationSignal(), executor, new BiometricPrompt.AuthenticationCallback() {
-                    @Override
-                    public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
-                        stopService(service);
-                        finishAffinity();
-                        finishAndRemoveTask();
-                    }
-                });
-            } else {
-                KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-                if (mKeyguardManager == null) {
-                    stopService(service);
-                    finishAffinity();
-                    finishAndRemoveTask();
-                    return;
-                }
-                Intent intent = mKeyguardManager
-                        .createConfirmDeviceCredentialIntent(
-                                "Unlock to close",
-                                "Please input PIN code");
-
-                startActivityForResult(intent, 111);
+            KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+            if (mKeyguardManager == null) {
+                stopService(service);
+                finishAffinity();
+                finishAndRemoveTask();
+                return;
             }
+            Intent intent = mKeyguardManager
+                    .createConfirmDeviceCredentialIntent(
+                            "Unlock to close",
+                            "Please input PIN code");
+
+            startActivityForResult(intent, 111);
         }));
 
 
@@ -104,17 +82,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onUserLeaveHint() {
         Log.d("onUserLeaveHint", "User left the app");
         super.onUserLeaveHint();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 111) {
-            if (resultCode == RESULT_OK) {
-                stopService(service);
-                finishAffinity();
-                finishAndRemoveTask();
-            }
-        }
     }
 
     /**

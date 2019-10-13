@@ -1,5 +1,6 @@
 package com.example.heroin;
 
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -111,7 +112,17 @@ public class Overlay extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);;
 
-        Intent closeIntent = new Intent();
+        KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+//        if (mKeyguardManager == null) {
+//            stopService(service);
+//            finishAffinity();
+//            finishAndRemoveTask();
+//            return;
+//        }
+        Intent closeIntent = mKeyguardManager
+                .createConfirmDeviceCredentialIntent(
+                        "Unlock to close",
+                        "Please input PIN code");
         Intent settingsIntent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Frend")
@@ -121,7 +132,7 @@ public class Overlay extends Service {
                 .addAction(
                         0, // TODO:  Need to change this?
                         "CLOSE APP",
-                        getActivity(this, 0, closeIntent, 0)
+                        getActivity(this, 111, closeIntent, 0)
                 )
                 .addAction(
                         0, // TODO:  Need to change this?

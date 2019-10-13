@@ -28,6 +28,8 @@ public class RenderView extends View {
     private final static int SLEEP_FRAMES = 305;
     private final static int X_FRAMES = 15;
     private final static int Y_FRAMES = 11;
+    private final static int X_FRAMES_SLEEP = 21;
+    private final static int Y_FRAMES_SLEEP = 15;
 
     private final int SPRITE_WIDTH;
     private final int SPRITE_HEIGHT;
@@ -39,12 +41,8 @@ public class RenderView extends View {
     private final Rect dest;
 
     private int frame = 0;
-    private int frameIndex = 0;
 
-    public AnimationState currentState = AnimationState.SLEEP;
-    private int[] idleFrames = {0, 1, 2, 3, 4, 5};
-    private int[] transitionFrames = {6, 7, 8, 9, 10, 11, 12, 13};
-    private int[] sleepFrames = {14, 15, 16, 17, 18, 19, 20};
+    public AnimationState currentState = AnimationState.IDLE;
 
     public RenderView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -53,7 +51,7 @@ public class RenderView extends View {
         paint.setFilterBitmap(false);
         paint.setDither(false);
         idleSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.new_idle);
-        sleepSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.sleep);
+        sleepSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.new_sleep);
         SPRITE_WIDTH = idleSpritemap.getWidth() / X_FRAMES;
         SPRITE_HEIGHT = idleSpritemap.getHeight() / Y_FRAMES;
         src = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
@@ -64,22 +62,34 @@ public class RenderView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        int curFrame = frame;
-
-        if (frame >= IDLE_FRAMES) {
-            curFrame = IDLE_FRAMES * 2 - frame;
-        }
-
-        src.left = (curFrame % X_FRAMES) * SPRITE_WIDTH;
-        src.right = (curFrame % X_FRAMES) * SPRITE_WIDTH + SPRITE_WIDTH;
-        src.top = (curFrame / X_FRAMES) * SPRITE_HEIGHT;
-        src.bottom = (curFrame / X_FRAMES) * SPRITE_HEIGHT + SPRITE_HEIGHT;
-
         if (currentState == AnimationState.IDLE) {
+            int curFrame = frame;
+
+            if (frame >= IDLE_FRAMES) {
+                curFrame = IDLE_FRAMES * 2 - frame;
+            }
+
+            src.left = (curFrame % X_FRAMES) * SPRITE_WIDTH;
+            src.right = (curFrame % X_FRAMES) * SPRITE_WIDTH + SPRITE_WIDTH;
+            src.top = (curFrame / X_FRAMES) * SPRITE_HEIGHT;
+            src.bottom = (curFrame / X_FRAMES) * SPRITE_HEIGHT + SPRITE_HEIGHT;
+
             canvas.drawBitmap(idleSpritemap, src, dest, paint);
         } else {
+            int curFrame = frame;
 
+            if (currentState == AnimationState.SLEEP) {
+                if (frame >= SLEEP_TRANSITION_FRAME) {
+                    curFrame = SLEEP_TRANSITION_FRAME * 2 - frame;
+                }
+            }
+
+            src.left = (curFrame % X_FRAMES_SLEEP) * SPRITE_WIDTH;
+            src.right = (curFrame % X_FRAMES_SLEEP) * SPRITE_WIDTH + SPRITE_WIDTH;
+            src.top = (curFrame / X_FRAMES_SLEEP) * SPRITE_HEIGHT;
+            src.bottom = (curFrame / X_FRAMES_SLEEP) * SPRITE_HEIGHT + SPRITE_HEIGHT;
+
+            canvas.drawBitmap(sleepSpritemap, src, dest, paint);
         }
 
         switch (currentState) {
@@ -87,12 +97,10 @@ public class RenderView extends View {
                 frame = (frame + 1) % (IDLE_FRAMES * 2 - 1);
                 break;
             case SLEEP_TRANSITION:
-                frameIndex = (frameIndex + 1) % transitionFrames.length;
-                frame = transitionFrames[frameIndex];
+                frame = (frame + 1) % (SLEEP_TRANSITION_FRAME);
                 break;
             case SLEEP:
-                frameIndex = (frameIndex + 1) % sleepFrames.length;
-                frame = sleepFrames[frameIndex];
+                frame = (frame + 1) % (SLEEP_FRAMES * 2 - 1);
                 break;
         }
     }

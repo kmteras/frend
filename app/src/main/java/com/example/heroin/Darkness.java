@@ -13,7 +13,7 @@ public class Darkness extends View {
     public static Darkness darkness;
 
     private static final int SLEEP_TIME = 30; // in seconds
-    private static final int WAKE_TIME = 90; // in seconds
+    private static final int WAKE_TIME = 10; // in seconds
 
     private static Instant resetTime = Instant.now();
     public static boolean sleeping = false;

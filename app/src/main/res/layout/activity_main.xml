@@ -21,7 +21,7 @@
             android:id="@+id/exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Close app" />
+            android:text="EXIT" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

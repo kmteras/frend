@@ -1,19 +1,13 @@
 package com.example.heroin;
 
-import android.app.Activity;
-import android.app.KeyguardManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,9 +15,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-
-import static android.app.PendingIntent.getActivity;
 
 public class Overlay extends Service {
     private static final long AUDIO_FREQ = 10000;
@@ -141,6 +132,7 @@ public class Overlay extends Service {
 
     @Override
     public void onDestroy() {
+        Log.d("Test", "In Overlay onDestory!");
         super.onDestroy();
         wm.removeViewImmediate(mView);
         wm.removeViewImmediate(darkView);

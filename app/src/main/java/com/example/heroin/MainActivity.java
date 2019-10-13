@@ -1,6 +1,5 @@
 package com.example.heroin;
 
-import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,10 +7,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
@@ -24,44 +23,61 @@ import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import static android.app.PendingIntent.getActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Intent service;
-
-    private static final String correctPin = "1111";
+    public static Intent service;
 
     private int PIN_RESULT_CODE = 111;
+    private NotificationManager notificationManager;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        preferences = this.getSharedPreferences(this.getPackageName(), MODE_PRIVATE);
+        preferences.edit().putBoolean(WindowChangeDetectingService.ACTIVE, true);
+        hideActionBar();
+        setContentView(R.layout.activity_main);
+        startService();
+        configureExitButton();
+        createApplicationsList();
+        setNotification();
+    }
+
+    private void startService() {
+        if (service == null) {
+            // Start service!
+            service = new Intent(MainActivity.this, Overlay.class);
+            startForegroundService(service);
+        }
+    }
+
+    private void hideActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
+    }
 
-        setContentView(R.layout.activity_main);
+    private void createApplicationsList() {
+        RecyclerView recyclerView = findViewById(R.id.RView);
+        RAdapter radapter = new RAdapter(this);
+        recyclerView.setAdapter(radapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(30), true));
+    }
 
+    private void configureExitButton() {
         Button exitButton = findViewById(R.id.exit);
-
-        service = new Intent(MainActivity.this, Overlay.class);
-        startForegroundService(service);
-
-        Executor executor = Executors.newSingleThreadExecutor();
 
         exitButton.setOnClickListener((v -> {
             Darkness.modal = true;
 
             KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             if (mKeyguardManager == null) {
-                stopService(service);
-                finishAffinity();
-                finishAndRemoveTask();
+                closeApp();
                 return;
             }
             Intent intent = mKeyguardManager
@@ -71,37 +87,22 @@ public class MainActivity extends AppCompatActivity {
 
             startActivityForResult(intent, PIN_RESULT_CODE);
         }));
+    }
 
-
-        RecyclerView recyclerView = findViewById(R.id.RView);
-        RAdapter radapter = new RAdapter(this);
-        recyclerView.setAdapter(radapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(30), true));
-
-
-
-
-
+    private void setNotification() {
         String CHANNEL_ID = "my_channel_01";
 
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                 "Channel human readable title",
                 NotificationManager.IMPORTANCE_DEFAULT);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);;
+        PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);
 
         KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-//        if (mKeyguardManager == null) {
-//            stopService(service);
-//            finishAffinity();
-//            finishAndRemoveTask();
-//            return;
-//        }
         Intent closeIntent = mKeyguardManager
                 .createConfirmDeviceCredentialIntent(
                         "Unlock to close",
@@ -134,19 +135,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d("Test", "In onDestroy!  Closing app forceably!");
         Process.killProcess(Process.myPid());
         super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("TEST", "Got activity result and will check code");
         if (requestCode == PIN_RESULT_CODE) {
+            Log.d("Test", "Correct code, will check result");
             if (resultCode == RESULT_OK) {
-                stopService(service);
-                finishAffinity();
-                finishAndRemoveTask();
+                Log.d("Test", "Correct result, closing app!");
+                closeApp();
             }
         }
+    }
+
+    private void closeApp() {
+        stopService(service);
+        finishAffinity();
+        finishAndRemoveTask();
+        preferences.edit().putBoolean(WindowChangeDetectingService.ACTIVE, true);
+        notificationManager.cancelAll();
+        finish();
     }
 
     /**

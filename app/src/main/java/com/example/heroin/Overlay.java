@@ -1,5 +1,6 @@
 package com.example.heroin;
 
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -100,48 +101,6 @@ public class Overlay extends Service {
                 return false;
             }
         });
-
-        String CHANNEL_ID = "my_channel_01";
-
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT);
-
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
-
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = getActivity(this, 0, notificationIntent, 0);;
-
-        KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-//        if (mKeyguardManager == null) {
-//            stopService(service);
-//            finishAffinity();
-//            finishAndRemoveTask();
-//            return;
-//        }
-        Intent closeIntent = mKeyguardManager
-                .createConfirmDeviceCredentialIntent(
-                        "Unlock to close",
-                        "Please input PIN code");
-        Intent settingsIntent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Frend")
-                .setContentText("Go back to your friend")
-                .setSmallIcon(R.drawable.heroicon)
-                .setContentIntent(pendingIntent)
-                .addAction(
-                        0, // TODO:  Need to change this?
-                        "CLOSE APP",
-                        getActivity(this, 111, closeIntent, 0)
-                )
-                .addAction(
-                        0, // TODO:  Need to change this?
-                        "SETTINGS",
-                        getActivity(this, 0, settingsIntent, 0)
-                )
-                .build();
-
-        startForeground(1, notification);
 
         updateRunnable = () -> {
             RenderView.renderView.invalidate();

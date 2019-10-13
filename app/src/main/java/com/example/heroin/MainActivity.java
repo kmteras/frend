@@ -38,38 +38,35 @@ public class MainActivity extends AppCompatActivity {
         service = new Intent(MainActivity.this, Overlay.class);
         startForegroundService(service);
 
-        exitButton.setOnClickListener((new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Darkness.modal = true;
+        exitButton.setOnClickListener((v -> {
+            Darkness.modal = true;
 
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.close_dialog, null);
-                EditText pin = mView.findViewById(R.id.pin);
-                Button confirm = mView.findViewById(R.id.confirm);
+            AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+            View mView = getLayoutInflater().inflate(R.layout.close_dialog, null);
+            EditText pin = mView.findViewById(R.id.pin);
+            Button confirm = mView.findViewById(R.id.confirm);
 
-                confirm.setOnClickListener(v1 -> {
-                    if (pin.getText().toString().equals(correctPin)) {
-                        stopService(service);
-                        finishAffinity();
-                        finishAndRemoveTask();
-                    } else {
-                        Toast.makeText(MainActivity.this, "Wrong PIN code",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+            confirm.setOnClickListener(v1 -> {
+                if (pin.getText().toString().equals(correctPin)) {
+                    stopService(service);
+                    finishAffinity();
+                    finishAndRemoveTask();
+                } else {
+                    Toast.makeText(MainActivity.this, "Wrong PIN code",
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.setOnDismissListener(d -> {
-                });
+            mBuilder.setView(mView);
+            AlertDialog dialog = mBuilder.create();
+            dialog.setOnDismissListener(d -> {
+            });
 
-                dialog.setOnCancelListener(c -> {
-                    Darkness.modal = false;
-                });
+            dialog.setOnCancelListener(c -> {
+                Darkness.modal = false;
+            });
 
-                dialog.show();
-            }
+            dialog.show();
         }));
 
 

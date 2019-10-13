@@ -6,10 +6,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.hardware.biometrics.BiometricPrompt;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.os.Process;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,6 +25,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import static android.app.PendingIntent.getActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     public static Intent service;
 
     private int PIN_RESULT_CODE = 111;
+    private String CHANNEL_ID = "my_channel_01";
     private NotificationManager notificationManager;
 
     @Override
@@ -71,26 +78,50 @@ public class MainActivity extends AppCompatActivity {
         exitButton.setOnClickListener((v -> {
             Darkness.modal = true;
 
-            KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-            if (mKeyguardManager == null) {
-                closeApp();
-                return;
-            }
-            Intent intent = mKeyguardManager
-                    .createConfirmDeviceCredentialIntent(
-                            "Unlock to close",
-                            "Please input PIN code");
+            Executor executor = Executors.newSingleThreadExecutor();
+            BiometricPrompt biometricPrompt = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                biometricPrompt = new BiometricPrompt.Builder(this)
+                        .setTitle("Use finger to close app")
+                        .setSubtitle("Please use it")
+                        .setNegativeButton("Cancel", executor, (dialog, which) -> {
 
-            startActivityForResult(intent, PIN_RESULT_CODE);
+                        }).build();
+
+                biometricPrompt.authenticate(new CancellationSignal(), executor, new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                        stopService(service);
+                        finishAffinity();
+                        finishAndRemoveTask();
+                        finish();
+                    }
+                });
+            } else {
+                KeyguardManager mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+                if (mKeyguardManager == null) {
+                    stopService(service);
+                    finishAffinity();
+                    finishAndRemoveTask();
+                    return;
+                }
+                Intent intent = mKeyguardManager
+                        .createConfirmDeviceCredentialIntent(
+                                "Unlock to close",
+                                "Please input PIN code");
+
+                startActivityForResult(intent, PIN_RESULT_CODE);
+            }
         }));
     }
 
     private void setNotification() {
-        String CHANNEL_ID = "my_channel_01";
 
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
                 "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
@@ -136,9 +167,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void closeApp() {
         stopService(service);
+        notificationManager.cancelAll();
+        notificationManager.deleteNotificationChannel(CHANNEL_ID);
         finishAffinity();
         finishAndRemoveTask();
-        notificationManager.cancelAll();
         finish();
     }
 

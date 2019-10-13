@@ -31,6 +31,7 @@ public class Overlay extends Service {
     private Handler handler;
     private Runnable updateRunnable;
     private MediaPlayer mediaPlayer;
+    private Runnable updateRunnable2;
 
     @Override
     public void onCreate() {
@@ -131,7 +132,7 @@ public class Overlay extends Service {
         startForeground(1, notification);
 
         updateRunnable = () -> {
-            RenderView.renderView.invalidate();
+//            RenderView.renderView.invalidate();
             Darkness.darkness.invalidate();
             handler.postDelayed(updateRunnable, 24);
 
@@ -143,7 +144,21 @@ public class Overlay extends Service {
             }
         };
         handler = new Handler();
-        handler.postDelayed(updateRunnable, 300);
+        handler.postDelayed(updateRunnable, 1000);
+
+        updateRunnable2 = () -> {
+            RenderView.renderView.invalidate();
+//            Darkness.darkness.invalidate();
+            handler.postDelayed(updateRunnable2, 400);
+
+            long currentTime = System.currentTimeMillis();
+
+            if (currentTime - lastTime > AUDIO_FREQ) {
+                playAudio();
+                lastTime = currentTime;
+            }
+        };
+        handler.postDelayed(updateRunnable2, 1000);
     }
 
     private void playAudio() {

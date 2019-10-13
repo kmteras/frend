@@ -9,9 +9,6 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
 
-import java.util.LinkedList;
-import java.util.List;
-
 
 public class RenderView extends View {
 
@@ -27,14 +24,15 @@ public class RenderView extends View {
     public static RenderView renderView;
 
     private final static int IDLE_FRAMES = 155;
-    private final static int SLEEP_FRAMES = 305;
     private final static int SLEEP_TRANSITION_FRAME = 265;
+    private final static int SLEEP_FRAMES = 305;
+    private final static int X_FRAMES = 15;
+    private final static int Y_FRAMES = 11;
 
-    private final static int SPRITE_WIDTH = 429;
-    private final static int SPRITE_HEIGHT = 300;
+    private final int SPRITE_WIDTH;
+    private final int SPRITE_HEIGHT;
 
     private final Paint paint;
-    private final List<Bitmap> bitmaps = new LinkedList<>();
     private final Bitmap idleSpritemap;
     private final Bitmap sleepSpritemap;
     private final Rect src;
@@ -54,14 +52,10 @@ public class RenderView extends View {
         paint.setAntiAlias(false);
         paint.setFilterBitmap(false);
         paint.setDither(false);
-        bitmaps.add(scaleBitmap(R.drawable.spritesheet_color));
-        bitmaps.add(scaleBitmap(R.drawable.spritesheet_shading));
-        bitmaps.add(scaleBitmap(R.drawable.spritesheet_borders));
-        bitmaps.add(scaleBitmap(R.drawable.tailsheet_color));
-        bitmaps.add(scaleBitmap(R.drawable.tailsheet_shading));
-        bitmaps.add(scaleBitmap(R.drawable.tailsheet_borders));
-        idleSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.idle);
+        idleSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.new_idle);
         sleepSpritemap = BitmapFactory.decodeResource(getResources(), R.drawable.sleep);
+        SPRITE_WIDTH = idleSpritemap.getWidth() / X_FRAMES;
+        SPRITE_HEIGHT = idleSpritemap.getHeight() / Y_FRAMES;
         src = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         dest = new Rect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         renderView = this;
@@ -71,15 +65,26 @@ public class RenderView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        src.left = frame * SPRITE_WIDTH + 1;
-        src.right = frame * SPRITE_WIDTH + SPRITE_WIDTH - 1;
+        int curFrame = frame;
 
-        canvas.drawBitmap(idleSpritemap, src, dest, paint);
+        if (frame >= IDLE_FRAMES) {
+            curFrame = IDLE_FRAMES * 2 - frame;
+        }
+
+        src.left = (curFrame % X_FRAMES) * SPRITE_WIDTH;
+        src.right = (curFrame % X_FRAMES) * SPRITE_WIDTH + SPRITE_WIDTH;
+        src.top = (curFrame / X_FRAMES) * SPRITE_HEIGHT;
+        src.bottom = (curFrame / X_FRAMES) * SPRITE_HEIGHT + SPRITE_HEIGHT;
+
+        if (currentState == AnimationState.IDLE) {
+            canvas.drawBitmap(idleSpritemap, src, dest, paint);
+        } else {
+
+        }
 
         switch (currentState) {
             case IDLE:
-                frameIndex = (frameIndex + 1) % idleFrames.length;
-                frame = idleFrames[frameIndex];
+                frame = (frame + 1) % (IDLE_FRAMES * 2 - 1);
                 break;
             case SLEEP_TRANSITION:
                 frameIndex = (frameIndex + 1) % transitionFrames.length;
@@ -90,9 +95,5 @@ public class RenderView extends View {
                 frame = sleepFrames[frameIndex];
                 break;
         }
-    }
-
-    private Bitmap scaleBitmap(int id) {
-        return BitmapFactory.decodeResource(getResources(), id);
     }
 }
